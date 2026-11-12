@@ -97,5 +97,5 @@ Make sure you have [Node.js v20+](https://nodejs.org) installed on your machine.
 
 *   **Lucas Bittencourt** - QA / Quality Engineer
 *   LinkedIn: [://linkedin.com](https://www.linkedin.com/in/lucas-teixeira-aita-bittencourt/)
-*   Portfolio: [YOUR_PORTFOLIO_URL_OR_EMAIL]
+*   Portfolio: [aita.lucas@hotmail.com]
 
