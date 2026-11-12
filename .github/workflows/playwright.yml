@@ -1,0 +1,83 @@
+name: Playwright Enterprise CI
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: "Run Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}"
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Define o total de shards (3 containers paralelos) e o índice de cada um
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Run Playwright tests (Shard ${{ matrix.shardIndex }})
+      # O segredo do sharding está nestes dois argumentos passados via CLI
+      run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+    - name: Upload Shard Report as Artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: blob-report-${{ matrix.shardIndex }}
+        path: blob-report/
+        retention-days: 1
+
+  merge-reports:
+    name: Merge and Publish Reports
+    # Este job só roda depois que todos os shards terminarem (com sucesso ou falha)
+    if: always()
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download all shard artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: all-blob-reports
+        pattern: blob-report-*
+        merge-multiple: true
+
+    - name: Merge Playwright Blob Reports into HTML Report
+      run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+    - name: Upload Final HTML Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: final-playwright-report
+        path: playwright-report/
+        retention-days: 7
+
