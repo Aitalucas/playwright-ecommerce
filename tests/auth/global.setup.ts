@@ -8,7 +8,7 @@ setup('authenticate', async ({ page }) => {
   const email = process.env.USER_EMAIL;
   const password = process.env.USER_PASSWORD;
   if (!email || !password) {
-    throw new Error('USER_EMAIL / USER_PASSWORD não foram carregados de .auth/user.env');
+    throw new Error('USER_EMAIL / USER_PASSWORD were not loaded from .auth/user.env');
   }
 
   const loginPage = new LoginPage(page);
@@ -19,24 +19,26 @@ setup('authenticate', async ({ page }) => {
   const loginError = page.getByText('Your email or password is incorrect!');
   await expect(loggedIn.or(loginError)).toBeVisible();
 
-  // Conta ainda não existe: cadastra (o site já deixa logado ao final)
+  // Account does not exist yet: sign up (the site logs the user in automatically at the end)
   if (await loginError.isVisible()) {
     const signupPage = new SignupPage(page);
     await signupPage.visit();
     await signupPage.signup({
-      name: 'Teste QA',
+      name: 'QA Tester',
       email,
       password,
-      firstName: 'Teste',
-      lastName: 'QA',
-      address: 'Rua A, 100',
-      state: 'SC',
-      city: 'Manopolis',
-      zipcode: '88000000',
-      mobileNumber: '48999999999',
+      firstName: 'QA',
+      lastName: 'Tester',
+      address: '123 Main Street',
+      country: 'Canada',
+      state: 'Ontario',
+      city: 'Toronto',
+      zipcode: 'M5V 2T6',
+      mobileNumber: '4165550123',
     });
   }
 
   await expect(loggedIn).toBeVisible();
+  // Persist the authenticated session so tests can reuse it via the authenticatedPage fixture
   await page.context().storageState({ path: authFile });
 });

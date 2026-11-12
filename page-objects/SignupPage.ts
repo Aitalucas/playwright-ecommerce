@@ -5,15 +5,15 @@ export interface SignupData {
   email: string;
   password: string;
   title?: 'Mr' | 'Mrs';
-  birthDay?: string;   // ex: '10'
-  birthMonth?: string; // ex: 'May'
-  birthYear?: string;  // ex: '1990'
+  birthDay?: string;   // e.g. '10'
+  birthMonth?: string; // e.g. 'May'
+  birthYear?: string;  // e.g. '1990'
   firstName: string;
   lastName: string;
   company?: string;
   address: string;
   address2?: string;
-  country?: string;    // ex: 'Canada'
+  country?: string;    // e.g. 'Canada'
   state: string;
   city: string;
   zipcode: string;
@@ -23,13 +23,13 @@ export interface SignupData {
 export class SignupPage {
   private readonly page: Page;
 
-  // Etapa 1: nome + email (página /login)
+  // Step 1: name + email (/login page)
   private readonly signupNameInput: Locator;
   private readonly signupEmailInput: Locator;
   private readonly signupButton: Locator;
   private readonly errorMessage: Locator;
 
-  // Etapa 2: informações da conta (página /signup)
+  // Step 2: account information (/signup page)
   private readonly titleMr: Locator;
   private readonly titleMrs: Locator;
   private readonly passwordInput: Locator;
@@ -50,7 +50,7 @@ export class SignupPage {
   private readonly mobileInput: Locator;
   private readonly createAccountButton: Locator;
 
-  // Etapa 3: confirmação
+  // Step 3: confirmation
   private readonly accountCreatedTitle: Locator;
   private readonly continueButton: Locator;
 
@@ -87,14 +87,14 @@ export class SignupPage {
   }
 
   /**
-   * Navega para a página de login/cadastro usando a baseURL da config
+   * Navigates to the login/signup page using the baseURL from the config
    */
   async visit(): Promise<void> {
     await this.page.goto('/login');
   }
 
   /**
-   * Etapa 1: preenche nome e email e avança para o formulário completo
+   * Step 1: fills in name and email, then moves on to the full signup form
    */
   async startSignup(name: string, email: string): Promise<void> {
     await this.signupNameInput.fill(name);
@@ -103,7 +103,7 @@ export class SignupPage {
   }
 
   /**
-   * Etapa 2: preenche o formulário "Enter Account Information" e envia
+   * Step 2: fills in the "Enter Account Information" form and submits it
    */
   async fillAccountInformation(data: SignupData): Promise<void> {
     if (data.title === 'Mrs') {
@@ -136,7 +136,7 @@ export class SignupPage {
   }
 
   /**
-   * Fluxo completo de cadastro: etapa 1 + etapa 2 + continuar após criação
+   * Full signup flow: step 1 + step 2 + continue after the account is created
    */
   async signup(data: SignupData): Promise<void> {
     await this.startSignup(data.name, data.email);
@@ -146,14 +146,14 @@ export class SignupPage {
   }
 
   /**
-   * Retorna true se a mensagem "ACCOUNT CREATED!" está visível
+   * Returns true if the "ACCOUNT CREATED!" message is visible
    */
   async isAccountCreated(): Promise<boolean> {
     return await this.accountCreatedTitle.isVisible();
   }
 
   /**
-   * Captura o texto de erro (ex: email já cadastrado)
+   * Captures the error text (e.g. email already registered)
    */
   async getErrorMessageText(): Promise<string | null> {
     return await this.errorMessage.textContent();

@@ -18,14 +18,14 @@ export class LoginPage {
   }
 
   /**
-   * Navega para a página de login/cadastro (baseURL: https://automationexercise.com)
+   * Navigates to the login/signup page (baseURL: https://automationexercise.com)
    */
   async visit(): Promise<void> {
     await this.page.goto('/login');
   }
 
   /**
-   * Executa o fluxo completo de autenticação
+   * Runs the full authentication flow
    */
   async login(email: string, password: string): Promise<void> {
     await this.emailInput.fill(email);
@@ -34,21 +34,21 @@ export class LoginPage {
   }
 
   /**
-   * Retorna true se "Logged in as <nome>" estiver visível no header
+   * Returns true if "Logged in as <name>" is visible in the header
    */
   async isLoggedIn(): Promise<boolean> {
     return await this.loggedInAs.isVisible();
   }
 
   /**
-   * Retorna true se o site mostrou erro de credenciais inválidas
+   * Returns true if the site displayed an invalid credentials error
    */
   async hasLoginError(): Promise<boolean> {
     return await this.errorMessage.isVisible();
   }
 
   /**
-   * Captura o texto de erro caso as credenciais sejam inválidas
+   * Captures the error text when the credentials are invalid
    */
   async getErrorMessageText(): Promise<string | null> {
     return await this.errorMessage.textContent();

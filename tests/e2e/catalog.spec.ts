@@ -1,23 +1,23 @@
-// Importe o seu 'test' customizado e não o nativo
+// Import the custom 'test' fixture instead of the native Playwright one
 import { test, expect } from '../../fixtures/basePage';
 
 test.describe('E-Commerce Catalog - Authenticated Features', () => {
 
   test('should allow authenticated user to add a product to the cart', async ({ authenticatedPage }) => {
-    // O browser já abre logado! Basta navegar direto para a página do produto (Blue Top)
+    // The browser opens already logged in! Just navigate straight to the product page (Blue Top)
     await authenticatedPage.goto('/product_details/1');
 
-    // Confirma que estamos na página certa antes de agir
+    // Confirm we are on the right page before acting
     await expect(authenticatedPage.getByRole('heading', { name: 'Blue Top' })).toBeVisible();
 
-    // Executa a ação do teste (o site não tem wishlist; o equivalente é o carrinho)
+    // Perform the test action (the site has no wishlist; the cart is the equivalent)
     await authenticatedPage.getByRole('button', { name: 'Add to cart' }).click();
 
-    // Valida o modal de sucesso
+    // Validate the success modal
     await expect(authenticatedPage.getByText('Added!')).toBeVisible();
     await expect(authenticatedPage.getByText('Your product has been added to cart.')).toBeVisible();
 
-    // Abre o carrinho e confirma que o produto está lá
+    // Open the cart and confirm the product is there
     await authenticatedPage.getByRole('link', { name: 'View Cart' }).click();
     await expect(authenticatedPage).toHaveURL(/\/view_cart/);
     await expect(authenticatedPage.getByRole('link', { name: 'Blue Top' })).toBeVisible();
