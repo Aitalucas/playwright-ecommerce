@@ -35,7 +35,11 @@ jobs:
 
     - name: Run Playwright tests (Shard ${{ matrix.shardIndex }})
       # O segredo do sharding está nestes dois argumentos passados via CLI
-      run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob
+      env:
+        CI: true
+        USER_EMAIL: ${{ secrets.USER_EMAIL }}
+        USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
 
     - name: Upload Shard Report as Artifact
       if: always()
@@ -80,4 +84,3 @@ jobs:
         name: final-playwright-report
         path: playwright-report/
         retention-days: 7
-

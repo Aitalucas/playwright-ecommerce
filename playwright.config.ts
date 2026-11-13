@@ -8,7 +8,7 @@ const BASE_URL = 'https://automationexercise.com/';
 
 export default defineConfig({
   testDir: './tests',
-  reporter: [['html', { open: 'never' }]],
+  reporter: process.env.CI ? 'blob' : [['html', { open: 'never' }]],
   use: {
     baseURL: BASE_URL,
   },
