@@ -20,7 +20,7 @@ An advanced, production-ready Test Automation Framework built with **Playwright*
 *   **Test Runner:** Playwright (Latest 2026 Stable)
 *   **CI/CD Engine:** GitHub Actions
 *   **Test Report:** Native Blob Reporter merged into a single multi-device HTML Report.
-*   **Target Application:** [Saucedemo](https://saucedemo.com) / [Conduit RealWorld App](https://realworld.io)
+*   **Target Application:** [Automation Exercise](https://automationexercise.com/)
 
 ---
 
@@ -96,6 +96,6 @@ Make sure you have [Node.js v20+](https://nodejs.org) installed on your machine.
 ## 🧠 Author
 
 *   **Lucas Bittencourt** - QA / Quality Engineer
-*   LinkedIn: [:https://www.linkedin.com/in/lucas-teixeira-aita-bittencourt/]
+*   LinkedIn: [Lucas Bittencourt](https://www.linkedin.com/in/lucas-teixeira-aita-bittencourt/)
 *   Portfolio: [aita.lucas@hotmail.com]
 
