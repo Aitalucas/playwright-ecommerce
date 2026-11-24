@@ -31,6 +31,30 @@ To minimize execution time and compute costs, the GitHub Actions workflow runs t
 
 The pipeline splits the test suite across **3 concurrent containers**, lowering execution time by up to 60%. If a test fails, screenshots, videos, and full network **Trace Viewer** logs are preserved and attached to the run.
 
+```mermaid
+flowchart LR
+    A[Push / Pull Request] --> B[GitHub Actions Trigger]
+    B --> C1[Shard 1/3<br/>Ubuntu Container]
+    B --> C2[Shard 2/3<br/>Ubuntu Container]
+    B --> C3[Shard 3/3<br/>Ubuntu Container]
+    
+    C1 --> D1[Blob Report 1]
+    C2 --> D2[Blob Report 2]
+    C3 --> D3[Blob Report 3]
+    
+    D1 & D2 & D3 --> E[Merge Reports Job]
+    E --> F[Unified Multi-Device<br/>HTML Report + Traces]
+
+    style A fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff
+    style B fill:#0f172a,stroke:#818cf8,stroke-width:2px,color:#fff
+    style C1 fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
+    style C2 fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
+    style C3 fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
+    style E fill:#312e81,stroke:#a78bfa,stroke-width:2px,color:#fff
+    style F fill:#4c1d95,stroke:#f472b6,stroke-width:2px,color:#fff
+```
+
+
 ---
 
 ## 📂 Project Structure
@@ -64,8 +88,8 @@ Make sure you have [Node.js v20+](https://nodejs.org) installed on your machine.
 ### Installation
 1. Clone this repository:
    ```bash
-   git clone https://github.com
-   cd YOUR_REPOSITORY_NAME
+   git clone https://github.com/Aitalucas/playwright-ecommerce
+   cd playwright-ecommerce
    ```
 2. Install project dependencies:
    ```bash
@@ -96,6 +120,6 @@ Make sure you have [Node.js v20+](https://nodejs.org) installed on your machine.
 ## 🧠 Author
 
 *   **Lucas Bittencourt** - QA / Quality Engineer
-*   LinkedIn: [Lucas Bittencourt](https://www.linkedin.com/in/lucas-teixeira-aita-bittencourt/)
-*   Portfolio: [aita.lucas@hotmail.com]
+*   LinkedIn: [Lucas Bittencourt](https://linkedin.com/in/lucas-teixeira-aita-bittencourt/)
+*   Email: [aita.lucas@hotmail.com](mailto:aita.lucas@hotmail.com)
 
