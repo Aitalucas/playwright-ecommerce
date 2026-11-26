@@ -1,125 +1,87 @@
-# Playwright Enterprise CI/CD Framework 🚀
+# Playwright E-commerce Test Automation
 
-An advanced, production-ready Test Automation Framework built with **Playwright** and **TypeScript**. This project demonstrates modern Quality Engineering practices required for fast-paced, high-scale national and international environments, focusing on performance optimization, API mocking, and robust CI/CD integration.
+End-to-end tests written with **Playwright** and **TypeScript** against [Automation Exercise](https://automationexercise.com/), a public website for automation practice. This is a personal portfolio project.
 
----
+## What is covered
 
-## 🎯 Key Architectural Features
+| File | What it does |
+| --- | --- |
+| `tests/auth/global.setup.ts` | Logs in (or signs up if the login is rejected) and saves the session to `.auth/user.json` |
+| `tests/e2e/catalog.spec.ts` | Adds a product to the cart as a logged-in user and checks that it appears in the cart |
+| `tests/e2e/checkout.spec.ts` | Goes through checkout, mocks an HTTP 500 on the payment request and checks that the order is not confirmed |
 
-*   **Global Authentication Setup (`storageState`):** Simulates a single-login workflow executed once during the initialization phase, storing credentials globally to skip UI login forms on subsequent tests.
-*   **Custom Reusable Fixtures:** Built-in isolation using extended Playwright fixtures (`authenticatedPage`) instead of traditional, flaky `beforeEach` hooks.
-*   **Hybrid Testing (API + UI):** Seeds required data using Playwright's native `request` client before executing UI validation, cutting execution time.
-*   **Network Interception & Mocking:** Intercepts API network traffic via `page.route` to simulate edge cases and resilient UX behaviors (e.g., handling `HTTP 500` server errors gracefully).
-*   **Visual Regression Testing:** Snapshot comparison assertions to prevent unexpected UI layout shifts.
+## Techniques used
 
----
+- **Reusable authenticated session:** a setup project saves the `storageState`, so the tests do not repeat the UI login.
+- **Custom fixture:** `authenticatedPage` opens an isolated browser context with the saved session and closes it after the test.
+- **Page Object Model:** `LoginPage` and `SignupPage` are used by the authentication setup.
+- **Network interception:** `page.route` mocks the payment error and blocks ad requests in the checkout test.
+- **CI with sharding:** GitHub Actions splits the run into 3 parallel shards and merges the blob reports into one HTML report.
 
-## 🛠️ Tech Stack & Tools
+Tests run on Chromium (Desktop Chrome).
 
-*   **Language:** TypeScript (Node.js v20+)
-*   **Test Runner:** Playwright (Latest 2026 Stable)
-*   **CI/CD Engine:** GitHub Actions
-*   **Test Report:** Native Blob Reporter merged into a single multi-device HTML Report.
-*   **Target Application:** [Automation Exercise](https://automationexercise.com/)
-
----
-
-## ⚡ Scalable CI/CD Pipeline (Sharding Strategy)
-
-To minimize execution time and compute costs, the GitHub Actions workflow runs tests using **Sharding**. 
-
-
-The pipeline splits the test suite across **3 concurrent containers**, lowering execution time by up to 60%. If a test fails, screenshots, videos, and full network **Trace Viewer** logs are preserved and attached to the run.
-
-```mermaid
-flowchart LR
-    A[Push / Pull Request] --> B[GitHub Actions Trigger]
-    B --> C1[Shard 1/3<br/>Ubuntu Container]
-    B --> C2[Shard 2/3<br/>Ubuntu Container]
-    B --> C3[Shard 3/3<br/>Ubuntu Container]
-    
-    C1 --> D1[Blob Report 1]
-    C2 --> D2[Blob Report 2]
-    C3 --> D3[Blob Report 3]
-    
-    D1 & D2 & D3 --> E[Merge Reports Job]
-    E --> F[Unified Multi-Device<br/>HTML Report + Traces]
-
-    style A fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff
-    style B fill:#0f172a,stroke:#818cf8,stroke-width:2px,color:#fff
-    style C1 fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
-    style C2 fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
-    style C3 fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#fff
-    style E fill:#312e81,stroke:#a78bfa,stroke-width:2px,color:#fff
-    style F fill:#4c1d95,stroke:#f472b6,stroke-width:2px,color:#fff
-```
-
-
----
-
-## 📂 Project Structure
+## Project structure
 
 ```text
-├── .github/
-│   └── workflows/
-│       └── playwright.yml       # Optimized Multi-job Sharded CI Pipeline
-├── tests/
-│   ├── auth/
-│   │   └── global.setup.ts      # One-time Session Storage Setup
-│   ├── e2e/
-│   │   ├── checkout.spec.ts     # E2E flows with API Mocking & Error Handling
-│   │   └── catalog.spec.ts      # Hybrid UI/API data validation
-├── fixtures/
-│   └── basePage.ts              # Custom Extended Playwright Fixtures
-├── page-objects/
-│   ├── CartPage.ts              # Page Object Model (POM) Design Pattern
-│   └── LoginPage.ts
-├── playwright.config.ts         # Multi-browser & Reporter Configuration
-└── README.md
+.github/workflows/playwright.yml   CI pipeline
+fixtures/basePage.ts               authenticatedPage fixture
+page-objects/
+  CartPage.ts                      Cart actions (not used by the tests yet)
+  LoginPage.ts                     Login page
+  SignupPage.ts                    Signup flow
+tests/
+  auth/global.setup.ts             Authentication setup
+  e2e/catalog.spec.ts              Add to cart
+  e2e/checkout.spec.ts             Payment error handling
+playwright.config.ts               Projects, base URL and reporters
 ```
 
----
+## Running locally
 
-## 🚀 Getting Started
+Requirements: [Node.js](https://nodejs.org) 20 or later.
 
-### Prerequisites
-Make sure you have [Node.js v20+](https://nodejs.org) installed on your machine.
+```bash
+git clone https://github.com/Aitalucas/playwright-ecommerce.git
+cd playwright-ecommerce
+npm ci
+npx playwright install --with-deps chromium
+```
 
-### Installation
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/Aitalucas/playwright-ecommerce
-   cd playwright-ecommerce
-   ```
-2. Install project dependencies:
-   ```bash
-   npm ci
-   ```
-3. Install required Playwright browser binaries:
-   ```bash
-   npx playwright install --with-deps
-   ```
+Create the file `.auth/user.env` with a test account. If the account does not exist, the setup creates it.
 
-### Running Tests Locally
+```env
+USER_EMAIL=your-test-email@example.com
+USER_PASSWORD=your-test-password
+```
 
-*   **Run all tests (Headless mode):**
-    ```bash
-    npx playwright test
-    ```
-*   **Run tests with UI Mode (Interactive Debugging):**
-    ```bash
-    npx playwright test --ui
-    ```
-*   **Generate and View HTML Report:**
-    ```bash
-    npx playwright show-report
-    ```
+The `.auth/` folder is ignored by Git. Use test-only credentials.
 
----
+Run the tests:
 
-## 🧠 Author
+```bash
+npx playwright test          # headless
+npx playwright test --ui     # UI mode
+npx playwright show-report   # open the last HTML report
+```
 
-*   **Lucas Bittencourt** - QA / Quality Engineer
-*   LinkedIn: [Lucas Bittencourt](https://linkedin.com/in/lucas-teixeira-aita-bittencourt/)
-*   Email: [aita.lucas@hotmail.com](mailto:aita.lucas@hotmail.com)
+## Continuous integration
 
+The workflow runs on pushes and pull requests to `main` or `master`.
+
+1. Add the repository secrets `USER_EMAIL` and `USER_PASSWORD`.
+2. Each of the 3 shards installs the dependencies, runs its part of the tests and uploads a blob report.
+3. A final job merges the reports and uploads `final-playwright-report`, kept for 7 days.
+
+## Next steps
+
+- Tests for invalid login, product search and removing items from the cart
+- Use `CartPage` in the cart and checkout tests
+- API tests with Playwright's `request` fixture
+- Screenshots and traces on failure
+
+## Author
+
+**Lucas Bittencourt**, QA Automation Engineer
+
+- [LinkedIn](https://linkedin.com/in/lucas-teixeira-aita-bittencourt/)
+- [aita.lucas@hotmail.com](mailto:aita.lucas@hotmail.com)
